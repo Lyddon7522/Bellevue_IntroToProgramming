@@ -2,3 +2,7 @@
 .idea/
 /.idea/.gitignore
 /.idea/IntroToProgramming.iml
+.DS_Store
+
+#Python Files
+*.pyc
