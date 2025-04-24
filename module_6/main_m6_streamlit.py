@@ -3,6 +3,8 @@ import streamlit as st
 import random
 import matplotlib.pyplot as plt
 
+# To run this code, run the command: streamlit run {path to file}
+# The enviroment file should include all dependencies needed.
 
 def main():
     # Set Page Title and Instructions
