@@ -8,6 +8,7 @@ def get_initials(full_name):
     Returns:
         str: The initials in the format "F. M. L."
     """
+
     # Split the full name into parts
     name_parts = full_name.split()
     
