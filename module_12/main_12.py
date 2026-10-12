@@ -203,18 +203,6 @@ def display_weather(weather_data):
     print(f"{art[3]}    {Fore.GREEN}Humidity:{Fore.CYAN} {humidity}%{Style.RESET_ALL}")
     print(f"{art[4]}    {Fore.GREEN}Wind:{Fore.WHITE} {wind_speed} mph {compass_direction}{Style.RESET_ALL}")
 
-    # Display a fun weather tip
-    tips = {
-        "clear": "Perfect day for outdoor activities! Don't forget sunscreen!",
-        "clouds": "Partly cloudy - nature's way of providing shade!",
-        "rain": "Remember your umbrella! Splash in puddles at your own risk!",
-        "drizzle": "Light rain - perfect for plants and poets!",
-        "thunderstorm": "Thunder means stay indoors. Lightning is nature's light show!",
-        "snow": "Bundle up! Great day for hot chocolate and snowmen!",
-        "mist": "Drive carefully - it's a bit foggy out there!"
-    }
-
-    print(f"\n{Fore.MAGENTA}💡 TIP: {tips.get(art_key, 'Enjoy your day, whatever the weather!')}{Style.RESET_ALL}")
     print(f"\n{Fore.YELLOW}{'=' * 50}{Style.RESET_ALL}")
 
 def main():

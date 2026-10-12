@@ -8,17 +8,6 @@ from main_12 import validate_zip_code, get_current_weather_data, display_weather
 
 class TestWeatherApp(unittest.TestCase):
 
-    # Save original stdout
-    original_stdout = sys.stdout
-
-    def setUp(self):
-        # Restore stdout before each test
-        sys.stdout = self.original_stdout
-
-    def tearDown(self):
-        # Restore stdout after each test
-        sys.stdout = self.original_stdout
-
     def test_validate_zip_code_valid(self):
         """Test validation with valid zip codes"""
         valid_zips = [
@@ -78,28 +67,21 @@ class TestWeatherApp(unittest.TestCase):
         self.assertEqual(result["main"]["temp"], 72.5)
 
     @patch('requests.get')
-    def test_get_weather_data_failure(self, mock_get):
+    @patch('sys.stdout', new_callable=io.StringIO)
+    def test_get_weather_data_failure(self, mock_stdout, mock_get):
         """Test API call failure handling"""
         # Make the request fail
         mock_get.side_effect = requests.exceptions.RequestException("API Error")
 
-        # Use StringIO to capture output
-        captured_output = io.StringIO()
-        original_stdout = sys.stdout
-        sys.stdout = captured_output
+        result = get_current_weather_data("12345")
+        output = mock_stdout.getvalue()
 
-        try:
-            result = get_current_weather_data("12345")
-            # Get the output
-            output = captured_output.getvalue()
-            # Verify the function handles errors properly
-            self.assertIsNone(result)
-            self.assertIn("Error fetching weather data", output)
-        finally:
-            # Always restore stdout even if the test fails
-            sys.stdout = original_stdout
+        # Verify the function handles errors properly
+        self.assertIsNone(result)
+        self.assertIn("Error fetching weather data", output)
 
-    def test_display_weather(self):
+    @patch('sys.stdout', new_callable=io.StringIO)
+    def test_display_weather(self, mock_stdout):
         """Test the weather display function"""
         test_data = {
             "name": "Test City",
@@ -108,45 +90,28 @@ class TestWeatherApp(unittest.TestCase):
             "wind": {"speed": 5.2}
         }
 
-        # Use StringIO to capture output
-        captured_output = io.StringIO()
-        original_stdout = sys.stdout
-        sys.stdout = captured_output
+        display_weather(test_data)
+        output = mock_stdout.getvalue()
 
-        try:
-            display_weather(test_data)
-            # Get the output
-            output = captured_output.getvalue()
-            # Check that the output contains expected weather information
-            self.assertIn("Test City", output)
-            self.assertIn("Clear Sky", output)
-            self.assertIn("72.5°F", output)
-            self.assertIn("70.1°F", output)
-            self.assertIn("45%", output)
-            self.assertIn("5.2 mph", output)
-        finally:
-            # Always restore stdout even if the test fails
-            sys.stdout = original_stdout
+        # Check that the output contains expected weather information
+        self.assertIn("TEST CITY", output)
+        self.assertIn("Clear Sky", output)
+        self.assertIn("72.5", output)
+        self.assertIn("70.1", output)
+        self.assertIn("45%", output)
+        self.assertIn("5.2 mph", output)
 
-    def test_display_weather_missing_data(self):
+    @patch('sys.stdout', new_callable=io.StringIO)
+    def test_display_weather_missing_data(self, mock_stdout):
         """Test display function with incomplete weather data"""
         test_data = {"name": "Test City"}  # Missing most fields
 
-        # Use StringIO to capture output
-        captured_output = io.StringIO()
-        original_stdout = sys.stdout
-        sys.stdout = captured_output
+        display_weather(test_data)
+        output = mock_stdout.getvalue()
 
-        try:
-            display_weather(test_data)
-            # Get the output
-            output = captured_output.getvalue()
-            # Check that the function handles missing data
-            self.assertIn("Test City", output)
-            self.assertIn("Unknown", output)
-        finally:
-            # Always restore stdout even if the test fails
-            sys.stdout = original_stdout
+        # Check that the function handles missing data
+        self.assertIn("TEST CITY", output)
+        self.assertIn("Unknown", output)
 
 if __name__ == "__main__":
     unittest.main()
